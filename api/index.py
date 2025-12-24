@@ -3,30 +3,22 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-# --- 1. DOMAIN VERIFICATION (Strict Mode) ---
+# 1. VERIFICATION ROUTE (Must stay exactly like this)
 @app.get("/.well-known/openai-apps-challenge")
 @app.get("/.well-known/openai/verification-token")
 async def verify_domain():
-    # We define the token as a variable to prevent copy-paste errors
-    # VERIFY THIS MATCHES YOUR FORM EXACTLY:
+    # Your correct token
     my_token = "nwgCcc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8"
-    
     return Response(content=my_token, media_type="text/plain")
 
-# --- 2. MOCK TOOLS ---
+# 2. TOOLS ROUTE (Simplified to prevent "Unknown Error")
+# We return an empty list. This is valid and safer.
 @app.get("/mcp/tools")
 @app.post("/mcp/tools")
 async def list_tools():
-    return JSONResponse(content={
-        "tools": [{
-            "name": "get_daily_quote",
-            "description": "Returns a random inspiring quote.",
-            "inputSchema": {"type": "object", "properties": {}, "required": []}
-        }]
-    })
+    return JSONResponse(content={"tools": []})
 
-# --- 3. ROOT CHECK ---
+# 3. ROOT CHECK
 @app.get("/")
 async def home():
-    # Changing this text forces Vercel to create a new build (busting the cache)
-    return {"status": "Daily Spark - Verifying Domain Attempt 2"}
+    return {"status": "Daily Spark - Final Fix"}
