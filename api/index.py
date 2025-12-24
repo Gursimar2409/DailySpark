@@ -3,37 +3,30 @@ from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
-# --- 1. THE CRITICAL FIX (Domain Verification) ---
-# We serve the token as PLAIN TEXT on the EXACT path ChatGPT asked for.
+# --- 1. DOMAIN VERIFICATION (Strict Mode) ---
 @app.get("/.well-known/openai-apps-challenge")
 @app.get("/.well-known/openai/verification-token")
 async def verify_domain():
-    # We return raw text, not JSON
-    return Response(
-        content="nwgCcc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8", 
-        media_type="text/plain"
-    )
+    # We define the token as a variable to prevent copy-paste errors
+    # VERIFY THIS MATCHES YOUR FORM EXACTLY:
+    my_token = "nwgCcc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8"
+    
+    return Response(content=my_token, media_type="text/plain")
 
-# --- 2. THE MOCK TOOLS (To satisfy the scanner) ---
+# --- 2. MOCK TOOLS ---
 @app.get("/mcp/tools")
 @app.post("/mcp/tools")
 async def list_tools():
-    # This JSON structure mimics a real MCP server perfectly
     return JSONResponse(content={
-        "tools": [
-            {
-                "name": "get_daily_quote",
-                "description": "Returns a random inspiring quote.",
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {},
-                    "required": []
-                }
-            }
-        ]
+        "tools": [{
+            "name": "get_daily_quote",
+            "description": "Returns a random inspiring quote.",
+            "inputSchema": {"type": "object", "properties": {}, "required": []}
+        }]
     })
 
 # --- 3. ROOT CHECK ---
 @app.get("/")
 async def home():
-    return {"status": "Daily Spark is Online (Plain Text Fix)"}
+    # Changing this text forces Vercel to create a new build (busting the cache)
+    return {"status": "Daily Spark - Verifying Domain Attempt 2"}
