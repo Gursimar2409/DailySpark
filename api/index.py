@@ -7,7 +7,7 @@ app = FastAPI()
 @app.get("/.well-known/openai/verification-token")
 async def verify_domain():
     # This matches the token from your screenshots
-    return {"verification_token": "5ZwbYcPS7n0gb_1iWrHNCQyTtIk2KQYXnBPoW2U_btE"}
+    return {"verification_token": "nwgcCc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8"}
 
 # 2. A "Fake" Tools Route
 # This tricks the server into thinking it's alive, preventing 404 errors
