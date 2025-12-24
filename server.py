@@ -1,10 +1,11 @@
 from mcp.server.fastmcp import FastMCP
+from fastapi import FastAPI
 import random
 
-# Initialize the server
+# 1. Initialize FastMCP
 mcp = FastMCP("Daily Spark")
 
-# TOOL 1: Get a Daily Quote
+# 2. Define your tools (Same as before)
 @mcp.tool()
 def get_daily_quote() -> str:
     """Returns an inspiring quote for the day."""
@@ -15,7 +16,6 @@ def get_daily_quote() -> str:
     ]
     return random.choice(quotes)
 
-# TOOL 2: Get a Fun Fact
 @mcp.tool()
 def get_daily_fact() -> str:
     """Returns a fascinating random fact."""
@@ -26,6 +26,12 @@ def get_daily_fact() -> str:
     ]
     return random.choice(facts)
 
-if __name__ == "__main__":
-    # This runs the server
-    mcp.run()
+# 3. EXPOSE THE APP FOR VERCEL (Crucial Step)
+# This extracts the internal web server so Vercel can see it
+app = mcp._http_server
+
+# 4. Add the Domain Verification Route
+# ChatGPT needs this specific path to verify you own the site
+@app.get("/.well-known/openai/verification-token")
+async def verify_domain():
+    return {"verification_token": "5ZwbYcPS7n0gb_1iWrHNCQyTtIk2KQYXnBPoW2U_btE"}
