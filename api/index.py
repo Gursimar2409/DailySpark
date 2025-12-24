@@ -1,23 +1,25 @@
-from fastapi import FastAPI
+from mcp.server.fastmcp import FastMCP
+import random
 
-# 1. Initialize a standard FastAPI app (This is "Serverless Safe")
-app = FastAPI()
+# 1. Initialize FastMCP
+mcp = FastMCP("Daily Spark")
 
-# 2. Add the Verification Route
-# (This is the ONLY thing you need to make the red error go away)
+# 2. Define Tools (This fixes the "Tool scan failed" error)
+@mcp.tool()
+def get_daily_quote() -> str:
+    """Returns an inspiring quote."""
+    return random.choice(["Quote A", "Quote B", "Quote C"])
+
+@mcp.tool()
+def get_daily_fact() -> str:
+    """Returns a fun fact."""
+    return random.choice(["Fact A", "Fact B", "Fact C"])
+
+# 3. EXPOSE THE APP FOR VERCEL
+app = mcp._http_server
+
+# 4. Verification Route
 @app.get("/.well-known/openai/verification-token")
 async def verify_domain():
-    # REPLACE WITH YOUR TOKEN
+    # Using the token you confirmed
     return {"verification_token": "5ZwbYcPS7n0gb_1iWrHNCQyTtIk2KQYXnBPoW2U_btE"}
-
-# 3. Add a "Mock" Tools route
-# (This tricks the "Scan Tools" button into seeing a live server, even if empty)
-@app.get("/mcp/tools")
-async def scan_tools():
-    return {"tools": []}
-
-# 4. Root check
-@app.get("/")
-async def home():
-    return {"status": "Daily Spark is Online"}
-
