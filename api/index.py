@@ -1,24 +1,21 @@
-from fastapi import FastAPI, Response
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI
+from fastapi.responses import PlainTextResponse, JSONResponse
 
 app = FastAPI()
 
-# 1. VERIFICATION ROUTE (Must stay exactly like this)
+# 1. VERIFICATION ROUTE (Strict Plain Text)
 @app.get("/.well-known/openai-apps-challenge")
 @app.get("/.well-known/openai/verification-token")
 async def verify_domain():
-    # Your correct token
-    my_token = "nwgCcc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8"
-    return Response(content=my_token, media_type="text/plain")
+    # Your token from the screenshots
+    return PlainTextResponse("nwgCcc8SO8zXQj1E59zeE-_1mv-V8retz1G8YpAEGK8")
 
-# 2. TOOLS ROUTE (Simplified to prevent "Unknown Error")
-# We return an empty list. This is valid and safer.
+# 2. MOCK TOOLS (Empty list to satisfy the scanner)
 @app.get("/mcp/tools")
-@app.post("/mcp/tools")
 async def list_tools():
     return JSONResponse(content={"tools": []})
 
 # 3. ROOT CHECK
 @app.get("/")
 async def home():
-    return {"status": "Daily Spark - Final Fix"}
+    return {"status": "Daily Spark - Final Attempt"}
